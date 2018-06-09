@@ -11,6 +11,20 @@ a, a:hover {
 li {
   list-style-type: none;
 }
+input {
+  border-width: 0;
+  border-bottom-width: 1px;
+  &:focus {
+    outline: none;
+  }
+}
+button {
+  background-color: transparent;
+  border-color: transparent;
+  &:focus {
+    outline: none;
+  }
+}
 body {
   font-size: 17px;
   text-align: center;

@@ -1,7 +1,9 @@
 <template>
 <div class="content">
 
-<div v-if="data.region && data.region.center">{{ 'La:' + data.region.center.latitude.toFixed(4) + ' Lo:' + data.region.center.longitude.toFixed(4) }}</div>
+<div v-if="data.region && data.region.center">
+  {{ 'You are at La:' + data.region.center.latitude.toFixed(4) + ' Lo:' + data.region.center.longitude.toFixed(4) }}
+</div>
 
 <div class="input-field">
   <div class="input">
@@ -22,7 +24,7 @@
         <h5>{{ v.name }}</h5>
       </div>
       <div class="addr"><i class="fas fa-map-marker-alt fa-fw"></i> {{ v.location.display_address.join(', ') }}</div>
-      <div class="dist"><i class="fas fa-road fa-fw"></i> {{ v.distance.toFixed(2) + 'm' }}</div>
+      <div class="dist"><i class="fas fa-road fa-fw"></i> {{ v.distance.toFixed(2) }}</div>
       <div class="coords"><i class="fas fa-globe fa-fw"></i> {{ 'La:' + v.coordinates.latitude.toFixed(4) + ' Lo:' + v.coordinates.longitude.toFixed(4) }}</div>
       <div class="rating">
         <i class="fas fa-star fa-fw"></i> {{ v.rating }}
@@ -33,10 +35,11 @@
     </div>
     <div class="operations">
       <button type="button" ><a :href="v.url" target="_blank">Have a Look</a></button>
-      <button type="button" @click="">Mark</button>
+      <button type="button" :title="$store.state.user?'':'Login to use'" @click="">Mark</button>
     </div>
   </div>
 </section>
+
 <section v-else>
   <p>Nothing to Show</p>
 </section>
@@ -46,6 +49,7 @@
 <script>
 import axios from 'axios'
 import { altImg } from '~/config/config'
+import { dats } from '~/config/test'
 export default {
   directives: {
     focus: {
@@ -58,7 +62,7 @@ export default {
     return {
       altImg: altImg,
       fetching: false,
-      data: {},
+      data: dats || {},
       loc: {
         addr: '',
         latitude: null,
@@ -151,6 +155,7 @@ export default {
         height: 100%;
         pointer-events: none;
         transition: all 0.5s cubic-bezier(0.6, 0.4, 0.3, 0.6);
+        user-select: none;
       }
       .fa-location-arrow {
         position: absolute;
@@ -233,15 +238,7 @@ export default {
         button {
           width: 100%;
           margin: 0 10px;
-          border-color: transparent;
-          background-color: $item-btn-bg-co;
-          cursor: pointer;
-          &:focus {
-            outline: none;
-          }
-          &:active {
-            background-color: $item-btn-bg-co-active;
-          }
+          @include btn-pri;
         }
       }
     }

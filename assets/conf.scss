@@ -10,3 +10,12 @@ $item-bg-co: rgba(121, 85, 72, 0.6);
 $item-btn-bg-co: rgba(109, 78, 67, 1);
 $item-btn-bg-co-active: rgba(121, 86, 74, 1);
 $item-shadow-hover: 1px 1px 0.7px 0.7px rgba(0, 0, 0, 0.7), -1px -1px 0.7px 0.7px rgba(0, 0, 0, 0.7);
+
+@mixin btn-pri {
+  background-color: $item-btn-bg-co;
+  cursor: pointer;
+  user-select: none;
+  &:active {
+    background-color: $item-btn-bg-co-active;
+  }
+}
