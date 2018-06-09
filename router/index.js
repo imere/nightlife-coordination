@@ -17,7 +17,7 @@ router.use('/getdata', (req, res) => {
     return response.status(400).json({ ok: false })
   } else {
     let params = Object.assign({
-      term: 'nightpub'
+      term: 'pub'
     }, req.body.qstr)
     const client = yelp.client(token);
     client.search(params).then(response => {
