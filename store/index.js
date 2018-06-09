@@ -9,8 +9,8 @@ export const mutations = {
 }
 
 export const actions = {
-  nuxtSererInit ({ commit }, { req }) {
-    require('es6-promise/auto')
+  nuxtServerInit ({ commit }, { req }) {
+    //
   },
   login: ({ commit }, { user }) => {
     commit('SET_USER', user)

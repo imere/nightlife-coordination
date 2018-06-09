@@ -10,7 +10,7 @@
 <style lang="scss">
 @import '~/assets/conf.scss';
 .nav {
-  position: absolute;
+  position: fixed;
   height: 100%;
   width: $nav-w;
   background-color: rgba(80, 80, 80, 1);
@@ -33,6 +33,13 @@
   &:hover {
     opacity: 1;
     cursor: pointer;
+  }
+}
+@media (max-width: 770px) {
+  .nav {
+    width: 100%;
+    height: 50px;
+    opacity: 1;
   }
 }
 </style>

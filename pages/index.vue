@@ -30,20 +30,29 @@ export default {
 @import '~/assets/conf.scss';
 .page {
   position: relative;
-
   .main {
     position: relative;
     display: flex;
     flex-flow: column wrap;
     width: 100%;
-    padding: 0 $main-pad 0 ($nav-w + $main-pad);
+    padding: 0 $main-pad 0 $nav-w;
     text-align: center;
     background-color: $primary;
     header {
-      padding-top: 100px;
+      padding-top: 70px;
       font-size: 40px;
-      font-family: "Agnes-Bold", Helvetica, Georgia, "sans-serif";
+      font-family: 'Courgette', cursive;
       user-select: none;
+    }
+  }
+}
+@media (max-width: 520px) {
+  .page {
+    .main {
+      header {
+        font-size: 30px;
+        padding-top: 65px;
+      }
     }
   }
 }
