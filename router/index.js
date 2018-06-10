@@ -12,9 +12,9 @@ router.use((req, res, next) => {
   next()
 })
 
-router.use('/getdata', (req, res) => {
+router.post('/getdata', (req, res) => {
   if (!req.body.qstr) {
-    return response.status(400).json({ ok: false })
+    return response.status(400).json({ msg: 'Lack of Query Data' })
   } else {
     let params = Object.assign({
       term: 'nightlife'
@@ -27,6 +27,9 @@ router.use('/getdata', (req, res) => {
     });
   }
 })
+
+const user = require('./user')
+router.use('/user', user)
 
 module.exports = {
   path: '/',

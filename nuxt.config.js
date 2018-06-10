@@ -1,4 +1,5 @@
 const bodyParser = require('body-parser')
+const session = require('express-session')
 module.exports = {
   head: {
     title: 'Nightlife Coordination',
@@ -31,7 +32,16 @@ module.exports = {
   },
   serverMiddleware: [
     bodyParser.json(),
+    session({
+      secret: 'cab98d7bfca9e7bed09aef',
+      resave: true,
+      saveUninitialized: false,
+      cookie: { maxAge: 60000 }
+    }),
     '~/router/index.js'
+  ],
+  plugins: [
+    { src: '~/plugins/vue-notification', ssr: false }
   ],
   route: {
     base: '/',

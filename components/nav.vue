@@ -1,12 +1,14 @@
 <template>
 <div class="nav">
 
+<notifications group="tip" position="top center" />
 <i class="fas fa-angle-right"></i>
 
 <div class="nav-top">
   <i class="fas fa-user-circle"></i>
   <div v-if="$store.state.user" class="username">{{ $store.state.user }}</div>
-  <div v-else class="username">Join</div>
+  <div v-else class="username" style="font-weight: 600;">Join and Enjoy</div>
+  <div v-if="$store.state.user" class="logout" title="logout" @click="logout"><i class="fas fa-sign-out-alt"></i></div>
 </div>
 <div class="nav-content">
   <div v-if="$store.state.user">
@@ -14,21 +16,21 @@
   <div v-else>
     <div class="inputs">
       <div class="user">
-        <input type="text" :class="[utest?'ok':'warn']" v-model.trim="user" />
-        <div class="user-info">
+        <input type="text" :class="[utest?'ok':'warn']" v-model.trim="user" @keyup.enter="login" placeholder="Username"/>
+        <div class="user-info" @click="utip" @mouseenter="utip">
           <i class="fas fa-info-circle fa-fw"></i>
         </div>
       </div>
       <div class="pass">
-        <input type="password" :class="[ptest?'ok':'warn']" v-model.trim="pass" />
-        <div class="pass-info">
+        <input type="password" :class="[ptest?'ok':'warn']" v-model.trim="pass" @keyup.enter="login" placeholder="Password"/>
+        <div class="pass-info" @click="ptip" @mouseenter="ptip">
           <i class="fas fa-info-circle fa-fw"></i>
         </div>
       </div>
     </div>
     <div class="buttons">
-      <button type="button">Register</button>
-      <button type="button">Login</button>
+      <button type="button" @click="register">Register</button>
+      <button type="button" @click="login">Login</button>
     </div>
   </div>
 </div>
@@ -39,11 +41,116 @@
 </div>
 </template>
 <script>
+import axios from 'axios'
 export default {
   data () {
     return {
       user: '',
       pass: ''
+    }
+  },
+  methods: {
+    clear () {
+      this.user = ''
+      this.pass = ''
+    },
+    utip () {
+      this.$notify({
+        group: 'tip',
+        text: '5-10 alphanum with leading alpha',
+        duration: 2500
+      })
+    },
+    ptip () {
+      this.$notify({
+        group: 'tip',
+        text: '5-15 alphanum',
+        duration: 2500
+      })
+    },
+    async register () {
+      let user = this.user
+      let pass = this.pass
+      if (!user || !pass) {
+        this.$notify({
+          group: 'tip',
+          type: 'warn',
+          text: 'input fileds required'
+        })
+      } else if (!/^[a-zA-Z]{1}[0-9a-zA-Z]{4,9}$/.test(user)) {
+        return this.$notify({
+          group: 'tip',
+          type: 'error',
+          text: 'invalid username'
+        })
+      } else if (!/^[0-9a-zA-Z]{5,15}$/.test(pass)) {
+        return this.$notify({
+          group: 'tip',
+          type: 'error',
+          text: 'invalid password'
+        })
+      } else {
+        try {
+          await axios.post('/user/register', { user, pass })
+          this.$notify({
+            group: 'tip',
+            text: 'register success'
+          })
+        } catch (ex) {
+          this.$notify({
+            group: 'tip',
+            type: 'error',
+            text: ex.response.data.msg || ex.message
+          })
+          console.error(ex.message)
+        }
+      }
+    },
+    async login () {
+      let user = this.user
+      let pass = this.pass
+      if (!user || !pass) {
+        this.$notify({
+          group: 'tip',
+          type: 'warn',
+          text: 'input fileds required'
+        })
+      } else if (!/^[a-zA-Z]{1}[0-9a-zA-Z]{4,9}$/.test(user)) {
+        return this.notify({
+          group: 'tip',
+          type: 'error',
+          text: 'invalid username'
+        })
+      } else if (!/^[0-9a-zA-Z]{5,15}$/.test(pass)) {
+        return this.$notify({
+          group: 'tip',
+          type: 'error',
+          text: 'invalid password'
+        })
+      } else {
+        try {
+          await this.$store.dispatch('login', { user, pass })
+          this.clear()
+          this.$notify({
+            group: 'tip',
+            text: 'login success'
+          })
+        } catch (ex) {
+          this.$notify({
+            group: 'tip',
+            type: 'error',
+            text: ex.response.data.msg || ex.message
+          })
+          console.error(ex)
+        }
+      }
+    },
+    async logout () {
+      await this.$store.dispatch('logout')
+      this.$notify({
+        group: 'tip',
+        text: 'Logged out'
+      })
     }
   },
   computed: {
@@ -60,21 +167,34 @@ export default {
 @import '~/assets/conf.scss';
 .nav {
   position: fixed;
-  height: 100%;
-  width: $nav-w;
-  padding-right: $nav-w;
   background-color: $primary;
   text-align: center;
   vertical-align: middle;
   opacity: 0.5;
   transition: all 0.1s cubic-bezier(0.4, 0.6, 0.3, 0.4);
   z-index: 200;
+  overflow: hidden;
+  user-select: none;
   .nav-top, .nav-content, nav-bottom {
     position: relative;
   }
   &>div {
     &>* {
       overflow: hidden;
+    }
+  }
+  .nav-top {
+    .logout {
+      position: absolute;
+      top: 50%;
+      right: 20px;
+      transform: translateY(-50%);
+      display: inline-block;
+      transition: all 0.2s linear;
+      cursor: pointer;
+      &:hover {
+        color: rgba(200, 200, 200, 0.7);
+      }
     }
   }
   .nav-content {
@@ -136,6 +256,7 @@ export default {
   &:hover {
     padding-right: 0;
     opacity: 1;
+    background-color: rgba(121, 85, 72, 0.8);
     .fa-angle-right {
       display: none;
     }
@@ -143,6 +264,9 @@ export default {
 }
 @media (min-width: 770px) {
   .nav {
+    width: $nav-w;
+    height: 100%;
+    padding-right: $nav-w;
     &>div {
       width: 100%;
       font-size: 1.4em;
@@ -205,21 +329,60 @@ export default {
 @media (max-width: 770px) {
   .nav {
     width: 100%;
-    height: 50px;
-    opacity: 0.8;
+    height: $nav-w;
+    text-align: center;
+    &>div {
+      width: 100%;
+      font-size: 1.4em;
+      overflow: hidden;
+    }
+    .nav-top {
+      width: 100%;
+      height: $nav-w;
+      .fa-user-circle {
+        position: absolute;
+        top: 50%;
+        left: 20px;
+        transform: translate(-50%, -50%);
+      }
+      .username {
+        display: inline-block;
+        max-width: 70%;
+        line-height: $nav-w;
+        text-align: center;
+        -webkit-line-clamp: 1;
+        text-overflow: ellipsis;
+      }
+    }
+    .nav-content {
+      width: 100%;
+      padding: 0 10%;
+      &>div {
+        display: inline-block;
+        width: 90%;
+        overflow: hidden;
+      }
+      .buttons {
+        display: flex;
+        justify-content: space-around;
+        button {
+          max-width: 50%;
+        }
+      }
+    }
+    .nav-bottom {
+      width: 100%;
+      height: 10%;
+      &>* {
+        display: inline-block;
+        width: 100%;
+      }
+    }
     &:hover {
       height: 300px;
     }
     .fa-angle-right {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translate(-50%, 50%) rotate(90deg);
-      width: 30px;
-      height: 30px;
-      font-size: 3em;
-      line-height: 30px;
-      transition: all 0.2s, linear;
+      display: none;
     }
   }
 }

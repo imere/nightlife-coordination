@@ -1,6 +1,7 @@
 <template>
 <div class="content">
 
+<notifications group="alert" position="top center" />
 <div v-if="data.region && data.region.center">
   {{ 'You are at La:' + data.region.center.latitude.toFixed(4) + ' Lo:' + data.region.center.longitude.toFixed(4) }}
 </div>
@@ -10,7 +11,7 @@
     <input type="text" v-focus v-model.trim.focus="loc.addr" @keyup.enter="get"/>
     <label>input your location, or -></label>
     <i v-if="fetching" class="fas fa-spinner fa-pulse"></i>
-    <i v-else class="fas fa-location-arrow" title="Get Position" @click="getLocation"></i>
+    <i v-else class="fas fa-location-arrow" title="Get Position" @click="getPosition"></i>
   </div>
 </div>
 
@@ -35,7 +36,7 @@
     </div>
     <div class="operations">
       <button type="button" ><a :href="v.url" target="_blank">Have a Look</a></button>
-      <button type="button" :title="$store.state.user?'':'Login to use'" @click="">Mark</button>
+      <button type="button" :title="$store.state.user?'':'Login to use'" :chunk="v" @click="mark">Mark</button>
     </div>
   </div>
 </section>
@@ -92,7 +93,12 @@ export default {
         }
       } else {
         this.fetching = false
-        return alert('Lack of Location Message')
+        return this.$notify({
+          group: 'alert',
+          type: 'warn',
+          title: 'Invalid Request',
+          text: 'Lack of Location Message'
+        })
       }
       try {
         let { data } = await axios.post('/getdata', { qstr })
@@ -103,10 +109,15 @@ export default {
       } catch (ex) {
         this.fetching = false
         console.error(ex.message)
-        alert('Request Faild\nInvalid Location or Network Error')
+        this.$notify({
+          group: 'alert',
+          type: 'error',
+          title: 'Request Faild',
+          text: 'Invalid Location or Network Error'
+        })
       }
     },
-    getLocation (ev) {
+    getPosition (ev) {
       this.fetching = true
       navigator.geolocation.getCurrentPosition(v => {
         this.loc.latitude = v.coords.latitude
@@ -115,8 +126,35 @@ export default {
       }, err => {
         this.fetching = false
         console.error(err)
-        alert('Get Position Faild')
+        this.$notify({
+          group: 'alert',
+          type: 'error',
+          text: err.message,
+          duration: 2500
+        })
       })
+    },
+    async mark (ev) {
+      console.log(ev.currentTarget.getAttribute('chunk'))
+      if (!this.$store.state.user) {
+        this.$notify({
+          group: 'alert',
+          type: 'warn',
+          text: 'login to mark'
+        })
+      } else {
+        let user = this.$store.state.user
+        try {
+          await axios.post('/marks/add', { user })
+        } catch (ex) {
+          console.error(ex)
+          this.$notify({
+            group: 'alert',
+            type: 'error',
+            text: ex.response.data.msg || ex.message
+          })
+        }
+      }
     }
   }
 }
