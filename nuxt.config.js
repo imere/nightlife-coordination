@@ -1,5 +1,6 @@
 const bodyParser = require('body-parser')
 const session = require('express-session')
+const MongoStore = require('connect-mongo')(session)
 module.exports = {
   head: {
     title: 'Nightlife Coordination',
@@ -36,7 +37,10 @@ module.exports = {
       secret: 'cab98d7bfca9e7bed09aef',
       resave: true,
       saveUninitialized: false,
-      cookie: { maxAge: 60000 }
+      store: new MongoStore({
+        url: process.env.suri,
+        ttl: 60 * 60
+      })
     }),
     '~/router/index.js'
   ],
@@ -45,8 +49,6 @@ module.exports = {
   ],
   route: {
     base: '/',
-    middleware: [],
-    routes: []
   },
   build: {
     vendor: ['axios'],

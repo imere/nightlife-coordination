@@ -12,18 +12,23 @@
 </div>
 <div class="nav-content">
   <div v-if="$store.state.user">
+    <div class="list">
+      <div class="rec" v-for="(v, i) in list" :key="v.id">
+        {{ v.name }}
+      </div>
+    </div>
   </div>
   <div v-else>
     <div class="inputs">
       <div class="user">
         <input type="text" :class="[utest?'ok':'warn']" v-model.trim="user" @keyup.enter="login" placeholder="Username"/>
-        <div class="user-info" @click="utip" @mouseenter="utip">
+        <div class="user-info" @click="utip" @mouseenter.once="utip">
           <i class="fas fa-info-circle fa-fw"></i>
         </div>
       </div>
       <div class="pass">
         <input type="password" :class="[ptest?'ok':'warn']" v-model.trim="pass" @keyup.enter="login" placeholder="Password"/>
-        <div class="pass-info" @click="ptip" @mouseenter="ptip">
+        <div class="pass-info" @click="ptip" @mouseenter.once="ptip">
           <i class="fas fa-info-circle fa-fw"></i>
         </div>
       </div>
@@ -43,10 +48,12 @@
 <script>
 import axios from 'axios'
 export default {
+  name: 'nav-com',
   data () {
     return {
       user: '',
-      pass: ''
+      pass: '',
+      list: {}
     }
   },
   methods: {
@@ -116,7 +123,7 @@ export default {
           text: 'input fileds required'
         })
       } else if (!/^[a-zA-Z]{1}[0-9a-zA-Z]{4,9}$/.test(user)) {
-        return this.notify({
+        return this.$notify({
           group: 'tip',
           type: 'error',
           text: 'invalid username'
@@ -135,6 +142,7 @@ export default {
             group: 'tip',
             text: 'login success'
           })
+          this.getList(user)
         } catch (ex) {
           this.$notify({
             group: 'tip',
@@ -145,8 +153,22 @@ export default {
         }
       }
     },
+    async getList (paramUser) {
+      let user = paramUser || this.$store.state.user
+      try {
+        let { data } = await axios.post('/mark/get', { user })
+        this.list = data
+      } catch (ex) {
+        this.$notify({
+          group: 'tip',
+          type: 'error',
+          text: 'Get Data Error'
+        })
+      }
+    },
     async logout () {
       await this.$store.dispatch('logout')
+      this.list = {}
       this.$notify({
         group: 'tip',
         text: 'Logged out'

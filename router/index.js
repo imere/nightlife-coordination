@@ -31,6 +31,9 @@ router.post('/getdata', (req, res) => {
 const user = require('./user')
 router.use('/user', user)
 
+const mark = require('./mark')
+router.use('/mark', mark)
+
 module.exports = {
   path: '/',
   handler: router
