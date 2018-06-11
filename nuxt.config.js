@@ -38,7 +38,7 @@ module.exports = {
       resave: true,
       saveUninitialized: false,
       store: new MongoStore({
-        url: process.env.suri,
+        url: process.env.suri || 'mongodb://127.0.0.1:27017/sessions',
         ttl: 60 * 60
       })
     }),

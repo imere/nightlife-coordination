@@ -11,10 +11,10 @@
   <div v-if="$store.state.user" class="logout" title="logout" @click="logout"><i class="fas fa-sign-out-alt"></i></div>
 </div>
 <div class="nav-content">
-  <div v-if="$store.state.user">
+  <div class="wrap" v-if="$store.state.user">
     <div class="list">
       <div class="rec" v-for="(v, i) in list" :key="v.id">
-        {{ v.name }}
+        <a :href="v.url" target="_blank">{{ v.name }}</a>
       </div>
     </div>
   </div>
@@ -157,7 +157,7 @@ export default {
       let user = paramUser || this.$store.state.user
       try {
         let { data } = await axios.post('/mark/get', { user })
-        this.list = data
+        this.list = data.marks
       } catch (ex) {
         this.$notify({
           group: 'tip',
@@ -378,7 +378,8 @@ export default {
     }
     .nav-content {
       width: 100%;
-      padding: 0 10%;
+      height: 65%;
+      padding: 0 5%;
       &>div {
         display: inline-block;
         width: 90%;
@@ -389,6 +390,27 @@ export default {
         justify-content: space-around;
         button {
           max-width: 50%;
+        }
+      }
+      .wrap {
+        width: 100%;
+        height: 100%;
+        .list {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          overflow-y: auto;
+          flex-flow: row wrap;
+          .rec {
+            display: inline-block;
+            max-width: 50%;
+            max-height: min-content;
+            padding-right: 30px;
+            -webkit-line-clamp: 1;
+            text-overflow: ellipsis;
+            text-align: left;
+            overflow: hidden;
+          }
         }
       }
     }

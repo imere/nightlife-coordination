@@ -30,7 +30,6 @@
 <script>
 import axios from 'axios'
 import ItemCom from './item.vue'
-import { dats } from '~/config/test'
 export default {
   name: 'content-com',
   components: {
@@ -46,7 +45,7 @@ export default {
   data () {
     return {
       fetching: false,
-      data: dats || {},
+      data: {},
       loc: {
         addr: '',
         latitude: null,

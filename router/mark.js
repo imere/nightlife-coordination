@@ -60,7 +60,7 @@ router.post('/del', (req, res) => {
     }, (err, doc) => {
       if (err) {
         res.status(500).json({ ok: false })
-      } else if (!docs) {
+      } else if (!doc) {
         res.status(401).json({ ok: false })
       } else {
         Users.findOneAndUpdate({
@@ -100,7 +100,7 @@ router.post('/get', (req, res) => {
     }, (err, doc) => {
       if (err) {
         res.status(500).json({ ok: false })
-      } else if (!docs) {
+      } else if (!doc) {
         res.status(401).json({ ok: false })
       } else {
         res.json(doc)

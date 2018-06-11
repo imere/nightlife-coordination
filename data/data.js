@@ -1,5 +1,5 @@
 const mg = require('mongoose')
-mg.connect(process.env.uuri)
+mg.connect(process.env.uuri || 'mongodb://127.0.0.1:27017/nightlife')
 const userSchema = mg.Schema({
   name: {
     type: String,
