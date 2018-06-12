@@ -32,6 +32,13 @@ import axios from 'axios'
 import ItemCom from './item.vue'
 export default {
   name: 'content-com',
+  head () {
+    return {
+      script: [
+        { src: '/label.js' }
+      ]
+    }
+  },
   components: {
     ItemCom
   },

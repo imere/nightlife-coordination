@@ -13,8 +13,9 @@
 <div class="nav-content">
   <div class="wrap" v-if="$store.state.user">
     <div class="list">
-      <div class="rec" v-for="(v, i) in list" :key="v.id">
-        <a :href="v.url" target="_blank">{{ v.name }}</a>
+      <div class="rec" v-for="(v, i) in list" :key="i" :id="v.id">
+        <a :href="v.url" :title="v.alias" target="_blank">{{ v.name }}</a>
+        <i class="far fa-trash-alt" :data-id="v.id" @click="delmark"></i>
       </div>
     </div>
   </div>
@@ -143,6 +144,7 @@ export default {
             text: 'login success'
           })
           this.getList(user)
+          this.$root.$on('getList', this.getList)
         } catch (ex) {
           this.$notify({
             group: 'tip',
@@ -162,7 +164,7 @@ export default {
         this.$notify({
           group: 'tip',
           type: 'error',
-          text: 'Get Data Error'
+          text: 'Get Marks Error'
         })
       }
     },
@@ -173,6 +175,41 @@ export default {
         group: 'tip',
         text: 'Logged out'
       })
+      this.$root.$off('getList')
+    },
+    async delmark (ev) {
+      let user = this.$store.state.user
+      let tg = ev.currentTarget
+      let id = tg.dataset.id
+      if (!user || !id) {
+        return this.$noitfy({
+          group: 'tip',
+          type: 'error',
+          text: 'Bad Request'
+        })
+      } else {
+        let f = confirm('confirm to delete')
+        if (f) {
+          try {
+            await axios.post('/mark/del', { user, id })
+            tg.parentNode.parentNode.removeChild(tg.parentNode)
+            this.$notify({
+              group: 'tip',
+              text: 'unmarked'
+            })
+          } catch (ex) {
+            console.error(ex)
+            this.$notify({
+              group: 'tip',
+              type: 'error',
+              text: ex.response.data.msg || ex.message
+            })
+          }
+        }
+      }
+    },
+    beforeDestroy () {
+      this.$root.$off('getList')
     }
   },
   computed: {
@@ -181,6 +218,12 @@ export default {
     },
     ptest () {
       return /^[0-9a-zA-Z]{5,15}$/.test(this.pass)
+    }
+  },
+  mounted () {
+    if (this.$store.state.user) {
+      this.getList()
+      this.$root.$on('getList', this.getList)
     }
   }
 }
@@ -262,6 +305,26 @@ export default {
         margin: 10px 0;
       }
     }
+    .wrap {
+      .list {
+        .rec {
+          position: relative;
+          .fa-trash-alt {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            cursor: pointer;
+          }
+          &>* {
+            transition: all 0.2s linear;
+            &:hover {
+              color: rgb(200, 200, 200);
+            }
+          }
+        }
+      }
+    }
   }
   .nav-bottom {
     a {
@@ -321,6 +384,27 @@ export default {
       .buttons {
         button {
           width: inherit;
+        }
+      }
+      .wrap {
+        width: 100%;
+        height: 100%;
+        .list {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          overflow-y: auto;
+          flex-direction: column;
+          .rec {
+            display: inline-block;
+            width: 100%;
+            max-height: 40px;
+            padding-right: 30px;
+            -webkit-line-clamp: 1;
+            text-overflow: ellipsis;
+            text-align: left;
+            overflow: hidden;
+          }
         }
       }
     }
@@ -398,13 +482,11 @@ export default {
         .list {
           width: 100%;
           height: 100%;
-          display: flex;
           overflow-y: auto;
-          flex-flow: row wrap;
           .rec {
             display: inline-block;
-            max-width: 50%;
-            max-height: min-content;
+            width: 90%;
+            max-height: 35px;
             padding-right: 30px;
             -webkit-line-clamp: 1;
             text-overflow: ellipsis;

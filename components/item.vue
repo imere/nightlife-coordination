@@ -54,6 +54,7 @@ export default {
             group: 'alert',
             text: 'marked'
           })
+          this.$root.$emit('getList')
         } catch (ex) {
           console.error(ex)
           this.$notify({
