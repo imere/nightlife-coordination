@@ -208,9 +208,6 @@ export default {
         }
       }
     },
-    beforeDestroy () {
-      this.$root.$off('getList')
-    }
   },
   computed: {
     utest () {
@@ -225,6 +222,9 @@ export default {
       this.getList()
       this.$root.$on('getList', this.getList)
     }
+  },
+  beforeDestroy () {
+    this.$root.$off('getList')
   }
 }
 </script>

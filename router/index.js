@@ -14,7 +14,7 @@ router.use((req, res, next) => {
 
 router.post('/getdata', (req, res) => {
   if (!req.body.qstr) {
-    return response.status(400).json({ msg: 'Lack of Query Data' })
+    return res.status(400).json({ msg: 'Lack of Query Data' })
   } else {
     let params = Object.assign({
       term: 'nightlife'
