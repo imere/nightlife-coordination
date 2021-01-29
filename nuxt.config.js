@@ -1,7 +1,10 @@
-const bodyParser = require('body-parser')
-const session = require('express-session')
-const MongoStore = require('connect-mongo')(session)
-module.exports = {
+import * as bodyParser from 'body-parser'
+import session from 'express-session'
+import connect from 'connect-mongo'
+
+const MongoStore = connect(session)
+
+export default {
   head: {
     title: 'Nightlife Coordination',
     meta: [
@@ -45,29 +48,22 @@ module.exports = {
     '~/router/index.js'
   ],
   plugins: [
-    { src: '~/plugins/vue-notification', ssr: false }
+    { src: '~/plugins/vue-notification', ssr: false },
+    { src: '~/plugins/v-focus', ssr: false }
   ],
   route: {
-    base: '/',
+    base: '/'
   },
-  build: {
-    vendor: ['axios'],
-    extend (config, ctx) {
-      if (ctx.isClient) {
-        config.module.rules.push({
-          enforce: 'pre',
-          test: /\.(js|vue)/,
-          exclude: /(node_modules)/,
-          use: [
-            {
-              loader: 'eslint-loader',
-              options: {
-                fix: true
-              }
-            }
-          ]
-        })
-      }
-    }
+  buildModules: [
+    ['@nuxtjs/eslint-module', {
+      fix: true
+    }],
+    '@nuxtjs/style-resources'
+  ],
+  styleResources: {
+    sass: [],
+    scss: ['~/assets/conf.scss'],
+    less: [],
+    stylus: []
   }
 }

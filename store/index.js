@@ -16,12 +16,8 @@ export const actions = {
     }
   },
   async login ({ commit }, { user, pass }) {
-    try {
-      const { data } = await axios.post('/user/login', { user, pass })
-      commit('SET_USER', data.user)
-    } catch (ex) {
-      throw ex
-    }
+    const { data } = await axios.post('/user/login', { user, pass })
+    commit('SET_USER', data.user)
   },
   async logout ({ commit }) {
     await axios.post('/user/logout')

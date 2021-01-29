@@ -1,36 +1,64 @@
 <template>
-<div class="item" :chunk="chunk">
-
-  <div class="img">
-    <img :src="v.image_url || altImg" :alt="v.alias" :title="v.alias"></img>
-  </div>
-  <div class="desc">
-    <div class="name">
-      <h5>{{ v.name }}</h5>
+  <div
+    class="item"
+    :chunk="chunk"
+  >
+    <div class="img">
+      <img
+        :src="v.image_url || altImg"
+        :alt="v.alias"
+        :title="v.alias"
+      >
     </div>
-    <div class="addr"><i class="fas fa-map-marker-alt fa-fw"></i> {{ v.location.display_address.join(', ') }}</div>
-    <div class="dist"><i class="fas fa-road fa-fw"></i> {{ v.distance.toFixed(2) }}</div>
-    <div class="coords"><i class="fas fa-globe fa-fw"></i> {{ 'La:' + v.coordinates.latitude.toFixed(4) + ' Lo:' + v.coordinates.longitude.toFixed(4) }}</div>
-    <div class="rating">
-      <i class="fas fa-star fa-fw"></i> {{ v.rating }}
+    <div class="desc">
+      <div class="name">
+        <h5>{{ v.name }}</h5>
+      </div>
+      <div class="addr">
+        <i class="fas fa-map-marker-alt fa-fw" /> {{ v.location.display_address.join(', ') }}
+      </div>
+      <div class="dist">
+        <i class="fas fa-road fa-fw" /> {{ v.distance.toFixed(2) }}
+      </div>
+      <div class="coords">
+        <i class="fas fa-globe fa-fw" /> {{ 'La:' + v.coordinates.latitude.toFixed(4) + ' Lo:' + v.coordinates.longitude.toFixed(4) }}
+      </div>
+      <div class="rating">
+        <i class="fas fa-star fa-fw" /> {{ v.rating }}
+      </div>
+      <div class="phone">
+        <i class="fas fa-phone fa-rotate-90 fa-fw" /> {{ v.display_phone }}
+      </div>
     </div>
-    <div class="phone">
-      <i class="fas fa-phone fa-rotate-90 fa-fw"></i> {{ v.display_phone }}
+    <div class="operations">
+      <button type="button">
+        <a
+          :href="v.url"
+          target="_blank"
+        >Have a Look</a>
+      </button>
+      <button
+        type="button"
+        :title="$store.state.user?'':'Login to use'"
+        @click="mark"
+      >
+        Mark
+      </button>
     </div>
   </div>
-  <div class="operations">
-    <button type="button" ><a :href="v.url" target="_blank">Have a Look</a></button>
-    <button type="button" :title="$store.state.user?'':'Login to use'" @click="mark">Mark</button>
-  </div>
-
-</div>
 </template>
+
 <script>
 import axios from 'axios'
 import { altImg } from '~/config/config'
 export default {
-  name: 'item-com',
-  props: ['chunk'],
+  name: 'ItemCom',
+  props: {
+    chunk: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   data () {
     return {
       altImg: altImg,
@@ -46,8 +74,8 @@ export default {
           text: 'login to mark'
         })
       } else {
-        let user = this.$store.state.user
-        let mark = JSON.stringify(this.chunk)
+        const user = this.$store.state.user
+        const mark = JSON.stringify(this.chunk)
         try {
           await axios.post('/mark/add', { user, mark })
           this.$notify({
@@ -68,8 +96,8 @@ export default {
   }
 }
 </script>
+
 <style lang="scss">
-@import '~/assets/conf.scss';
 .item {
   display: flex;
   flex-flow: row wrap;

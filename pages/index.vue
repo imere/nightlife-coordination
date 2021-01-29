@@ -1,24 +1,22 @@
 <template>
-<div class="page">
+  <div class="page">
+    <nav-com />
 
-<nav-com/>
+    <div class="main">
+      <header>
+        <i class="fas fa-glass-martini" />
+        <span>Nightlife Coordination</span>
+      </header>
 
-<div class="main">
-
-  <header>
-    <i class="fas fa-glass-martini"></i>
-    <span>Nightlife Coordination</span>
-  </header>
-
-  <content-com/>
-
-</div>
-
-</div>
+      <content-com />
+    </div>
+  </div>
 </template>
+
 <script>
 import NavCom from '~/components/nav.vue'
 import ContentCom from '~/components/content.vue'
+
 export default {
   components: {
     NavCom,
@@ -26,8 +24,8 @@ export default {
   }
 }
 </script>
+
 <style lang="scss">
-@import '~/assets/conf.scss';
 .page {
   position: relative;
   .main {

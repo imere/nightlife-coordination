@@ -1,44 +1,59 @@
 <template>
-<div class="content">
+  <div class="content">
+    <notifications
+      group="alert"
+      position="top center"
+    />
+    <div v-if="data.region && data.region.center">
+      {{ 'You are at La:' + data.region.center.latitude.toFixed(4) + ' Lo:' + data.region.center.longitude.toFixed(4) }}
+    </div>
 
-<notifications group="alert" position="top center" />
-<div v-if="data.region && data.region.center">
-  {{ 'You are at La:' + data.region.center.latitude.toFixed(4) + ' Lo:' + data.region.center.longitude.toFixed(4) }}
-</div>
+    <div class="input-field">
+      <div class="input">
+        <input
+          v-model.trim="loc.addr"
+          v-focus
+          type="text"
+          @keyup.enter="get"
+        >
+        <label>input your location, or -></label>
+        <i
+          v-if="fetching"
+          class="fas fa-spinner fa-pulse"
+        />
+        <i
+          v-else
+          class="fas fa-location-arrow"
+          title="Get Position"
+          @click="getPosition"
+        />
+      </div>
+    </div>
 
-<div class="input-field">
-  <div class="input">
-    <input type="text" v-focus v-model.trim.focus="loc.addr" @keyup.enter="get"/>
-    <label>input your location, or -></label>
-    <i v-if="fetching" class="fas fa-spinner fa-pulse"></i>
-    <i v-else class="fas fa-location-arrow" title="Get Position" @click="getPosition"></i>
+    <section
+      v-if="data.total"
+      class="items container"
+    >
+      <div
+        v-for="(v, i) in data.businesses"
+        :key="i"
+      >
+        <item-com :chunk="v" />
+      </div>
+    </section>
+
+    <section v-else>
+      <p>Nothing to Show</p>
+    </section>
   </div>
-</div>
-
-<section class="items container" v-if="data.total">
-  <div v-for="(v, i) in data.businesses" :key="i">
-    <item-com :chunk="v"/>
-  </div>
-</section>
-
-<section v-else>
-  <p>Nothing to Show</p>
-</section>
-
-</div>
 </template>
+
 <script>
 import axios from 'axios'
 import ItemCom from './item.vue'
+
 export default {
-  name: 'content-com',
-  head () {
-    return {
-      script: [
-        { src: '/label.js' }
-      ]
-    }
-  },
+  name: 'ContentCom',
   components: {
     ItemCom
   },
@@ -58,6 +73,13 @@ export default {
         latitude: null,
         longitude: null
       }
+    }
+  },
+  head () {
+    return {
+      script: [
+        { src: '/label.js' }
+      ]
     }
   },
   methods: {
@@ -90,7 +112,7 @@ export default {
         })
       }
       try {
-        let { data } = await axios.post('/getdata', { qstr })
+        const { data } = await axios.post('/getdata', { qstr })
         this.data = data || {}
         console.log(data)
         this.fetching = false
@@ -126,8 +148,8 @@ export default {
   }
 }
 </script>
+
 <style lang="scss">
-@import '~/assets/conf.scss';
 .content {
   .input-field {
     margin: 50px auto 40px;

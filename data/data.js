@@ -1,5 +1,12 @@
-const mg = require('mongoose')
-mg.connect(process.env.uuri || 'mongodb://127.0.0.1:27017/nightlife')
+import mg from 'mongoose'
+
+mg.connect(process.env.uuri || 'mongodb://127.0.0.1:27017/nightlife', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+  useCreateIndex: true
+})
+
 const userSchema = mg.Schema({
   name: {
     type: String,

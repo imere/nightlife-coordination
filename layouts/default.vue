@@ -1,14 +1,11 @@
 <template>
-<div class="wrapper">
-
-<div class="mask">
-</div>
-<nuxt/>
-
-</div>
+  <div class="wrapper">
+    <div class="mask" />
+    <nuxt />
+  </div>
 </template>
+
 <style lang="scss">
-@import '~/assets/conf.scss';
 .mask {
   position: fixed;
   width: 100%;

@@ -1,61 +1,144 @@
 <template>
-<div class="nav">
+  <div class="nav">
+    <notifications
+      group="tip"
+      position="top center"
+    />
+    <i class="fas fa-angle-right" />
 
-<notifications group="tip" position="top center" />
-<i class="fas fa-angle-right"></i>
-
-<div class="nav-top">
-  <i class="fas fa-user-circle"></i>
-  <div v-if="$store.state.user" class="username">{{ $store.state.user }}</div>
-  <div v-else class="username" style="font-weight: 600;">Join and Enjoy</div>
-  <div v-if="$store.state.user" class="logout" title="logout" @click="logout"><i class="fas fa-sign-out-alt"></i></div>
-</div>
-<div class="nav-content">
-  <div class="wrap" v-if="$store.state.user">
-    <div class="list">
-      <div class="rec" v-for="(v, i) in list" :key="i" :id="v.id">
-        <a :href="v.url" :title="v.alias" target="_blank">{{ v.name }}</a>
-        <i class="far fa-trash-alt" :data-id="v.id" @click="delmark"></i>
+    <div class="nav-top">
+      <i class="fas fa-user-circle" />
+      <div
+        v-if="$store.state.user"
+        class="username"
+      >
+        {{ $store.state.user }}
+      </div>
+      <div
+        v-else
+        class="username"
+        style="font-weight: 600;"
+      >
+        Join and Enjoy
+      </div>
+      <div
+        v-if="$store.state.user"
+        class="logout"
+        title="logout"
+        @click="logout"
+      >
+        <i class="fas fa-sign-out-alt" />
       </div>
     </div>
-  </div>
-  <div v-else>
-    <div class="inputs">
-      <div class="user">
-        <input type="text" :class="[utest?'ok':'warn']" v-model.trim="user" @keyup.enter="login" placeholder="Username"/>
-        <div class="user-info" @click="utip" @mouseenter.once="utip">
-          <i class="fas fa-info-circle fa-fw"></i>
+    <div class="nav-content">
+      <div
+        v-if="$store.state.user"
+        class="wrap"
+      >
+        <div class="list">
+          <div
+            v-for="(v, i) in list"
+            :id="v.id"
+            :key="i"
+            class="rec"
+          >
+            <a
+              :href="v.url"
+              :title="v.alias"
+              target="_blank"
+            >{{ v.name }}</a>
+            <i
+              class="far fa-trash-alt"
+              :data-id="v.id"
+              @click="delmark"
+            />
+          </div>
         </div>
       </div>
-      <div class="pass">
-        <input type="password" :class="[ptest?'ok':'warn']" v-model.trim="pass" @keyup.enter="login" placeholder="Password"/>
-        <div class="pass-info" @click="ptip" @mouseenter.once="ptip">
-          <i class="fas fa-info-circle fa-fw"></i>
+      <div v-else>
+        <div class="inputs">
+          <div class="user">
+            <input
+              v-model.trim="user"
+              type="text"
+              :class="[utest?'ok':'warn']"
+              placeholder="Username"
+              @keyup.enter="login"
+            >
+            <div
+              class="user-info"
+              @click="utip"
+              @mouseenter.once="utip"
+            >
+              <i class="fas fa-info-circle fa-fw" />
+            </div>
+          </div>
+          <div class="pass">
+            <input
+              v-model.trim="pass"
+              type="password"
+              :class="[ptest?'ok':'warn']"
+              placeholder="Password"
+              @keyup.enter="login"
+            >
+            <div
+              class="pass-info"
+              @click="ptip"
+              @mouseenter.once="ptip"
+            >
+              <i class="fas fa-info-circle fa-fw" />
+            </div>
+          </div>
+        </div>
+        <div class="buttons">
+          <button
+            type="button"
+            @click="register"
+          >
+            Register
+          </button>
+          <button
+            type="button"
+            @click="login"
+          >
+            Login
+          </button>
         </div>
       </div>
     </div>
-    <div class="buttons">
-      <button type="button" @click="register">Register</button>
-      <button type="button" @click="login">Login</button>
+    <div class="nav-bottom">
+      <div><a href="https://www.linkedin.com/in/lu-z-3b15a8154/"><i class="fab fa-linkedin fa-fw" />imere</a></div>
     </div>
   </div>
-</div>
-<div class="nav-bottom">
-  <div><a href="https://www.linkedin.com/in/lu-z-3b15a8154/"><i class="fab fa-linkedin fa-fw"></i>imere</a></div>
-</div>
-
-</div>
 </template>
+
 <script>
 import axios from 'axios'
 export default {
-  name: 'nav-com',
+  name: 'NavCom',
   data () {
     return {
       user: '',
       pass: '',
       list: {}
     }
+  },
+  computed: {
+    utest () {
+      return /^[a-zA-Z]{1}[0-9a-zA-Z]{4,9}$/.test(this.user)
+    },
+    ptest () {
+      return /^[0-9a-zA-Z]{5,15}$/.test(this.pass)
+    }
+  },
+  mounted () {
+    if (this.$store.state.user) {
+      this.getList()
+      this.$root.$on('getList', this.getList)
+    }
+  },
+  beforeUnmount () {
+    this.$root.$off('getList')
   },
   methods: {
     clear () {
@@ -77,8 +160,8 @@ export default {
       })
     },
     async register () {
-      let user = this.user
-      let pass = this.pass
+      const user = this.user
+      const pass = this.pass
       if (!user || !pass) {
         this.$notify({
           group: 'tip',
@@ -115,8 +198,8 @@ export default {
       }
     },
     async login () {
-      let user = this.user
-      let pass = this.pass
+      const user = this.user
+      const pass = this.pass
       if (!user || !pass) {
         this.$notify({
           group: 'tip',
@@ -156,9 +239,9 @@ export default {
       }
     },
     async getList (paramUser) {
-      let user = paramUser || this.$store.state.user
+      const user = paramUser || this.$store.state.user
       try {
-        let { data } = await axios.post('/mark/get', { user })
+        const { data } = await axios.post('/mark/get', { user })
         this.list = data.marks
       } catch (ex) {
         this.$notify({
@@ -178,9 +261,9 @@ export default {
       this.$root.$off('getList')
     },
     async delmark (ev) {
-      let user = this.$store.state.user
-      let tg = ev.currentTarget
-      let id = tg.dataset.id
+      const user = this.$store.state.user
+      const tg = ev.currentTarget
+      const id = tg.dataset.id
       if (!user || !id) {
         return this.$noitfy({
           group: 'tip',
@@ -188,7 +271,7 @@ export default {
           text: 'Bad Request'
         })
       } else {
-        let f = confirm('confirm to delete')
+        const f = confirm('confirm to delete')
         if (f) {
           try {
             await axios.post('/mark/del', { user, id })
@@ -207,29 +290,12 @@ export default {
           }
         }
       }
-    },
-  },
-  computed: {
-    utest () {
-      return /^[a-zA-Z]{1}[0-9a-zA-Z]{4,9}$/.test(this.user)
-    },
-    ptest () {
-      return /^[0-9a-zA-Z]{5,15}$/.test(this.pass)
     }
-  },
-  mounted () {
-    if (this.$store.state.user) {
-      this.getList()
-      this.$root.$on('getList', this.getList)
-    }
-  },
-  beforeDestroy () {
-    this.$root.$off('getList')
   }
 }
 </script>
+
 <style lang="scss">
-@import '~/assets/conf.scss';
 .nav {
   position: fixed;
   background-color: $primary;
