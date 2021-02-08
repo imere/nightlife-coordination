@@ -1,6 +1,6 @@
 import mg from 'mongoose'
 
-import ENV from '../config/env'
+import * as ENV from '../config/env'
 
 mg.connect(ENV.uuri || 'mongodb://127.0.0.1:27017/nightlife', {
   useNewUrlParser: true,

@@ -2,7 +2,7 @@ import * as bodyParser from 'body-parser'
 import session from 'express-session'
 import connect from 'connect-mongo'
 
-import ENV from './config/env'
+import * as ENV from './config/env'
 
 const MongoStore = connect(session)
 
