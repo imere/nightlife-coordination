@@ -1,5 +1,7 @@
-const router = require('express').Router()
-const Users = require('../data/data')
+import express from 'express'
+import Users from '../data/data'
+
+const router = express.Router()
 
 router.post('/add', (req, res) => {
   if (!req.body ||
@@ -109,4 +111,4 @@ router.post('/get', (req, res) => {
   }
 })
 
-module.exports = router
+export default router

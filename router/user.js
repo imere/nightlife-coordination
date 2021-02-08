@@ -1,5 +1,7 @@
-const router = require('express').Router()
-const Users = require('../data/data')
+import express from 'express'
+import Users from '../data/data'
+
+const router = express.Router()
 
 router.post('/register', (req, res) => {
   if (!req.body ||
@@ -62,4 +64,4 @@ router.post('/logout', (req, res) => {
   res.json({ ok: true })
 })
 
-module.exports = router
+export default router

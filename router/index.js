@@ -1,8 +1,12 @@
-const { token } = require('../config/env')
-const express = require('express')
-const router = express.Router()
+import { token } from '../config/env'
+import express from 'express'
+import * as yelp from 'yelp-fusion'
+
+import user from './user'
+import mark from './mark'
+
 const app = express()
-const yelp = require('yelp-fusion')
+const router = express.Router()
 
 router.use((req, res, next) => {
   Object.setPrototypeOf(req, app.request)
@@ -28,13 +32,11 @@ router.post('/getdata', (req, res) => {
   }
 })
 
-const user = require('./user')
 router.use('/user', user)
 
-const mark = require('./mark')
 router.use('/mark', mark)
 
-module.exports = {
+export default {
   path: '/',
   handler: router
 }

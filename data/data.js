@@ -31,5 +31,6 @@ const userSchema = mg.Schema({
   },
   marks: Array
 })
+
 const Users = mg.model('users', userSchema)
-module.exports = Users
+export default Users
