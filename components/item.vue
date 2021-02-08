@@ -5,9 +5,11 @@
   >
     <div class="img">
       <img
-        :src="v.image_url || altImg"
+        :ref="image.refName"
+        :src="v.image_url || image.altImg"
         :alt="v.alias"
         :title="v.alias"
+        @error.once="handleImageError"
       >
     </div>
     <div class="desc">
@@ -61,11 +63,18 @@ export default {
   },
   data () {
     return {
-      altImg: altImg,
+      image: {
+        refName: 'img',
+        altImg
+      },
       v: this.chunk
     }
   },
   methods: {
+    handleImageError () {
+      const { $refs, image: { refName, altImg } } = this
+      $refs[refName].src = altImg
+    },
     async mark () {
       if (!this.$store.state.user) {
         this.$notify({
