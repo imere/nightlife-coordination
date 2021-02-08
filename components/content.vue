@@ -57,13 +57,6 @@ export default {
   components: {
     ItemCom
   },
-  directives: {
-    focus: {
-      inserted: function (el) {
-        el.focus()
-      }
-    }
-  },
   data () {
     return {
       fetching: false,
@@ -91,19 +84,8 @@ export default {
       }
     },
     async get () {
-      this.fetching = true
-      let qstr = {}
-      if (this.loc.addr) {
-        qstr = {
-          location: this.loc.addr
-        }
-      } else if (this.loc.latitude && this.loc.longitude) {
-        qstr = {
-          latitude: this.loc.latitude,
-          longitude: this.loc.longitude
-        }
-      } else {
-        this.fetching = false
+      const { addr, longitude, latitude } = this.loc
+      if (!addr && !longitude && !latitude) {
         return this.$notify({
           group: 'alert',
           type: 'warn',
@@ -111,14 +93,22 @@ export default {
           text: 'Lack of Location Message'
         })
       }
+
       try {
-        const { data } = await axios.post('/getdata', { qstr })
+        this.fetching = true
+        const { data } = await axios.post('/getdata', {
+          qstr: addr
+            ? {
+                location: addr
+              }
+            : {
+                latitude,
+                longitude
+              }
+        })
         this.data = data || {}
-        console.log(data)
-        this.fetching = false
         this.clear()
       } catch (ex) {
-        this.fetching = false
         console.error(ex.message)
         this.$notify({
           group: 'alert',
@@ -126,16 +116,18 @@ export default {
           title: 'Request Faild',
           text: 'Invalid Location or Network Error'
         })
+      } finally {
+        this.fetching = false
       }
     },
     getPosition () {
       this.fetching = true
-      navigator.geolocation.getCurrentPosition(v => {
-        this.loc.latitude = v.coords.latitude
-        this.loc.longitude = v.coords.longitude
+      navigator.geolocation.getCurrentPosition(({ coords: { latitude, longitude } }) => {
+        this.fetching = false
+        this.loc.latitude = latitude
+        this.loc.longitude = longitude
         this.get()
       }, err => {
-        this.fetching = false
         console.error(err)
         this.$notify({
           group: 'alert',

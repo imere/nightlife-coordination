@@ -57,9 +57,11 @@ export default {
     base: '/'
   },
   buildModules: [
-    ['@nuxtjs/eslint-module', {
-      fix: true
-    }],
+    [
+      '@nuxtjs/eslint-module', {
+        fix: true
+      }
+    ],
     '@nuxtjs/style-resources'
   ],
   styleResources: {

@@ -1,6 +1,7 @@
 import mg from 'mongoose'
 
 import * as ENV from '../config/env'
+import { validatePassword, validateUsername } from '../config/validator'
 
 mg.connect(ENV.uuri || 'mongodb://127.0.0.1:27017/nightlife', {
   useNewUrlParser: true,
@@ -15,18 +16,14 @@ const userSchema = mg.Schema({
     required: true,
     unique: true,
     validate: {
-      validator: function (v) {
-        return /^[a-zA-Z]{1}[0-9a-zA-Z]{4,9}$/.test(v)
-      }
+      validator: validateUsername
     }
   },
   pass: {
     type: String,
     required: true,
     validate: {
-      validator: function (v) {
-        return /^[0-9a-zA-Z]{5,15}$/.test(v)
-      }
+      validator: validatePassword
     }
   },
   marks: Array

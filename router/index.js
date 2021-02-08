@@ -19,17 +19,17 @@ router.use((req, res, next) => {
 router.post('/getdata', (req, res) => {
   if (!req.body.qstr) {
     return res.status(400).json({ msg: 'Lack of Query Data' })
-  } else {
-    let params = Object.assign({
-      term: 'nightlife'
-    }, req.body.qstr)
-    const client = yelp.client(token);
-    client.search(params).then(response => {
-      res.json(response.jsonBody);
-    }).catch(e => {
-      res.status(400).json(e.message);
-    });
   }
+
+  const client = yelp.client(token)
+  client.search({
+    term: 'nightlife',
+    ...req.body.qstr
+  }).then(response => {
+    res.json(response.jsonBody)
+  }).catch(e => {
+    res.status(400).json(e.message)
+  })
 })
 
 router.use('/user', user)
