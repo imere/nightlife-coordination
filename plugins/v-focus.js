@@ -2,8 +2,10 @@ import Vue from 'vue'
 
 Vue.use({
   install (instance) {
-    instance.directive('focus', function (el) {
-      el.focus()
+    instance.directive('focus', {
+      inserted (el) {
+        el.focus()
+      }
     })
   }
 })
