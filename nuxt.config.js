@@ -2,6 +2,8 @@ import * as bodyParser from 'body-parser'
 import session from 'express-session'
 import connect from 'connect-mongo'
 
+import ENV from './config/env'
+
 const MongoStore = connect(session)
 
 export default {
@@ -41,7 +43,7 @@ export default {
       resave: true,
       saveUninitialized: false,
       store: new MongoStore({
-        url: process.env.suri || 'mongodb://127.0.0.1:27017/sessions',
+        url: ENV.suri || 'mongodb://127.0.0.1:27017/sessions',
         ttl: 60 * 60
       })
     }),
